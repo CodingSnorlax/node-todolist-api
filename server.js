@@ -80,6 +80,21 @@ const requestListener = (req, res) => {
     });
     res.write(jsonContent);
     res.end();
+  } else if (req.url.startsWith("/todos/") && req.method === "DELETE") {
+    const id = req.url.split("/").pop(); //刪除陣列最後一個值並回傳
+    const deleteIndex = todos.findIndex((x) => x.uuid === id);
+    if (deleteIndex !== -1) {
+      res.writeHead(200, headers);
+      todos.splice(deleteIndex, 1);
+      const jsonContent = JSON.stringify({
+        status: "success",
+        data: todos,
+      });
+      res.write(jsonContent);
+      res.end();
+    } else {
+      errorHandle(res);
+    }
   } else if (req.method === "OPTIONS") {
     //處理 RESTful API preflight 機制 (會在正式的 request 前先發一個測試的請求確認連線暢通)
     res.writeHead(200, headers);
